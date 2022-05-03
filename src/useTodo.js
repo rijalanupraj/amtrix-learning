@@ -18,10 +18,14 @@ const useTodo = () => {
       switch (action.type) {
         case 'ADD':
           let newList = state.list;
-          newList.push({
-            title: action.payload.title,
-            id: Date.now().toString(36)
-          });
+          newList = [
+            ...newList,
+            {
+              title: action.payload.title,
+              id: Date.now().toString(36)
+            }
+          ];
+          console.log(newList);
           return { ...state, list: newList };
         case 'DELETE':
           const updatedList = state.list.filter((elem, index) => {

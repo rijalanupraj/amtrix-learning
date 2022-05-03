@@ -6,6 +6,7 @@ import useTodo from './useTodo';
 
 function App() {
   const [todos, dispatch] = useTodo();
+  console.log('Hello');
 
   return (
     <MyContext.Provider value={{ todos, dispatch }}>

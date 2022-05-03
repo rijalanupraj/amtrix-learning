@@ -4,7 +4,6 @@ import SingleTodo from './SingleTodo';
 
 const TodosList = () => {
   const { todos, dispatch } = useContext(MyContext);
-
   return (
     <div>
       <ul>
