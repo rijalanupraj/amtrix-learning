@@ -1,20 +1,22 @@
 import React, { useReducer } from 'react';
 import MyContext from './utils/context';
-import TodosList from './TodosList';
-import NewTodo from './NewTodo';
 import useTodo from './useTodo';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import TodoPage from './TodoPage';
+import ArchivePage from './ArchivePage';
 
 function App() {
-  const [todos, dispatch] = useTodo();
-  console.log('Hello');
+  const { todos, dispatch, CRUDTodo, CRUDArchive } = useTodo();
 
   return (
-    <MyContext.Provider value={{ todos, dispatch }}>
-      <div>
-        <NewTodo />
-        <TodosList />
-      </div>
-    </MyContext.Provider>
+    <BrowserRouter>
+      <MyContext.Provider value={{ todos, dispatch, CRUDTodo, CRUDArchive }}>
+        <Routes>
+          <Route path='/' element={<TodoPage />}></Route>
+          <Route path='/archive' element={<ArchivePage />}></Route>
+        </Routes>
+      </MyContext.Provider>
+    </BrowserRouter>
   );
 }
 

@@ -1,57 +1,18 @@
-// useTodo Hook which extends useReducer Hook
 import React, { useReducer } from 'react';
-import MyContext from './utils/context';
 
 const useTodo = () => {
   const initialState = {
-    list: [
-      {
-        title: 'ffjdskfjsdk',
-        id: '423'
-      }
-    ],
-    archived: []
+    list: [],
+    archive: []
   };
 
   const [todos, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
-        case 'ADD':
-          let newList = state.list;
-          newList = [
-            ...newList,
-            {
-              title: action.payload.title,
-              id: Date.now().toString(36)
-            }
-          ];
-          console.log(newList);
-          return { ...state, list: newList };
-        case 'DELETE':
-          const updatedList = state.list.filter((elem, index) => {
-            return elem.id !== action.payload.id;
-          });
-          return { ...state, list: updatedList };
-        case 'UPDATE':
-          const updateId = action.payload.id;
-          // Update the todo
-          const updatedTodo = state.list.find(elem => {
-            return elem.id === updateId;
-          });
-
-          // Update the todo
-          updatedTodo.title = action.payload.updatedTodo;
-
-          // Update the list
-          let upList = state.list.map(elem => {
-            if (elem.id === updateId) {
-              return updatedTodo;
-            } else {
-              return elem;
-            }
-          });
-          return { ...state, list: upList };
-
+        case 'LIST':
+          return { ...state, list: action.list };
+        case 'ARCHIVE':
+          return { ...state, archive: action.archive };
         default:
           return state;
       }
@@ -59,7 +20,62 @@ const useTodo = () => {
     { ...initialState }
   );
 
-  return [todos, dispatch];
+  const CRUDTodo = (opt, payload) => {
+    switch (opt) {
+      case 'ADD':
+        let newList = [...todos.list, payload.newTodo];
+        return dispatch({ type: 'LIST', list: newList });
+
+      case 'ARCHIVE':
+        let archiveList = [...todos.archive];
+        let remainingList = todos.list.filter((elem, index) => {
+          if (elem.id === payload.id) {
+            archiveList = [...archiveList, elem];
+          }
+          return elem.id !== payload.id;
+        });
+        dispatch({ type: 'ARCHIVE', archive: archiveList });
+        return dispatch({ type: 'LIST', list: remainingList });
+
+      case 'DELETE':
+        let remList = todos.list.filter((elem, index) => {
+          return elem.id !== payload.id;
+        });
+        return dispatch({ type: 'LIST', list: remList });
+      case 'UPDATE':
+        const updatedTodo = todos.list.find(elem => {
+          return elem.id === payload.id;
+        });
+        updatedTodo.title = payload.updatedTodo;
+
+        // Updated List
+        let upList = todos.list.map(elem => {
+          if (elem.id === payload.id) {
+            return updatedTodo;
+          } else {
+            return elem;
+          }
+        });
+        return dispatch({ type: 'LIST', list: upList });
+
+      default:
+        return todos.list;
+    }
+  };
+
+  const CRUDArchive = (opt, payload) => {
+    switch (opt) {
+      case 'DELETE':
+        let remainingArchive = todos.archive.filter((elem, index) => {
+          return elem.id !== payload.id;
+        });
+        return dispatch({ type: 'ARCHIVE', archive: remainingArchive });
+      default:
+        return todos.archive;
+    }
+  };
+
+  return { todos, dispatch, CRUDTodo, CRUDArchive };
 };
 
 export default useTodo;

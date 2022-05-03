@@ -4,7 +4,7 @@ import MyContext from './utils/context';
 const SingleTodo = ({ todo }) => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [updatedText, setUpdatedText] = useState('');
-  const { dispatch } = useContext(MyContext);
+  const { dispatch, CRUDTodo } = useContext(MyContext);
 
   const onEditButtonClick = () => {
     setIsUpdate(prev => {
@@ -14,7 +14,7 @@ const SingleTodo = ({ todo }) => {
 
   const onUpdateButtonClick = event => {
     event.preventDefault();
-    dispatch({ type: 'UPDATE', payload: { id: todo.id, updatedTodo: updatedText } });
+    CRUDTodo('UPDATE', { id: todo.id, updatedTodo: updatedText });
     setIsUpdate(false);
   };
 
@@ -23,10 +23,20 @@ const SingleTodo = ({ todo }) => {
       <p>
         {todo.title}
         <button
-          style={{ backgroundColor: 'red', color: 'white' }}
-          onClick={() => dispatch({ type: 'DELETE', payload: { id: todo.id } })}
+          style={{ backgroundColor: 'pink', color: 'white' }}
+          onClick={() =>
+            CRUDTodo('ARCHIVE', {
+              id: todo.id
+            })
+          }
         >
-          Delete
+          ARCHIVE
+        </button>
+        <button
+          style={{ backgroundColor: 'red', color: 'white' }}
+          onClick={() => CRUDTodo('DELETE', { id: todo.id })}
+        >
+          DELETE
         </button>
         <button
           style={{ backgroundColor: 'lightgreen', color: 'black' }}
@@ -34,17 +44,17 @@ const SingleTodo = ({ todo }) => {
         >
           Edit
         </button>
-        {isUpdate && (
-          <div>
-            <input
-              type='text'
-              value={updatedText}
-              onChange={event => setUpdatedText(event.target.value)}
-            />
-            <button onClick={onUpdateButtonClick}>Update Todo</button>
-          </div>
-        )}
       </p>
+      {isUpdate && (
+        <div>
+          <input
+            type='text'
+            value={updatedText}
+            onChange={event => setUpdatedText(event.target.value)}
+          />
+          <button onClick={onUpdateButtonClick}>Update Todo</button>
+        </div>
+      )}
     </div>
   );
 };

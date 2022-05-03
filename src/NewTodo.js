@@ -3,11 +3,11 @@ import MyContext from './utils/context';
 
 const NewTodo = () => {
   const [newTitle, setNewTitle] = useState('');
-  const { dispatch } = useContext(MyContext);
+  const { CRUDTodo } = useContext(MyContext);
 
   const onButtonClick = event => {
     event.preventDefault();
-    dispatch({ type: 'ADD', payload: { title: newTitle } });
+    CRUDTodo('ADD', { newTodo: { title: newTitle, id: Date.now().toString(36) } });
   };
 
   return (

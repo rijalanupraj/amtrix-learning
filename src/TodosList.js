@@ -3,7 +3,7 @@ import MyContext from './utils/context';
 import SingleTodo from './SingleTodo';
 
 const TodosList = () => {
-  const { todos, dispatch } = useContext(MyContext);
+  const { todos } = useContext(MyContext);
   return (
     <div>
       <ul>
