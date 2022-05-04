@@ -4,9 +4,9 @@ const useData = () => {
   const initialValue = {
     data: [
       [1, 'Anup Raj', 'Rijal', 21, 4000],
-      [2, 'Sulav', 'Pandey', 22, 14000],
-      [3, 'Simanta', 'Karki', 71, 8000],
       [4, 'Hrishav', 'Paija', 17, 32000],
+      [3, 'Simanta', 'Karki', 71, 8000],
+      [2, 'Sulav', 'Pandey', 22, 14000],
       [5, 'Pranap', 'Khadka', 32, 23000]
     ]
   };
