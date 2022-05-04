@@ -5,6 +5,7 @@ import AddTable from './AddTable';
 
 function MyTable() {
   const myRef = useRef();
+  const headings = ['S.N', 'First Name', 'Last Name', 'Age', 'Salary'];
   const { empInfo, CRUDData } = useContext(MyContext);
   const [inEditMode, setInEditMode] = useState({
     data: null,
@@ -18,6 +19,10 @@ function MyTable() {
     columnId: null,
     sortType: null,
     dataType: null
+  });
+  const [searchData, setSearchData] = useState({
+    term: '',
+    column: 0
   });
 
   useEffect(() => {
@@ -100,6 +105,9 @@ function MyTable() {
           return a[sortData.columnId].localeCompare(b[sortData.columnId]);
         });
         break;
+      case 'DEFAULT':
+        console.log('hello');
+        break;
       default:
         break;
     }
@@ -140,8 +148,6 @@ function MyTable() {
   };
 
   const renderTableHeading = () => {
-    const headings = ['S.N', 'First Name', 'Last Name', 'Age', 'Salary'];
-
     return (
       <>
         {headings.map((elem, index) => {
@@ -151,14 +157,19 @@ function MyTable() {
               {sortData.columnId !== index && (
                 <>
                   <i
-                    className='sort-icon fa fa-sort-desc'
+                    className='sort-icon fa fa-arrow-up'
                     onClick={() =>
                       onIconClick(index, 'DESC', index > 0 && index < 3 ? 'STR' : 'NUM')
                     }
                     aria-hidden='true'
                   ></i>
                   <i
-                    className='sort-icon fa fa-sort-asc'
+                    className='sort-icon fa-solid fa-circle-minus'
+                    onClick={() => onIconClick(index, 'DEFAULT', 'DEFAULT')}
+                    aria-hidden='true'
+                  ></i>
+                  <i
+                    className='sort-icon fa fa-arrow-down'
                     onClick={() =>
                       onIconClick(index, 'ASC', index > 0 && index < 3 ? 'STR' : 'NUM')
                     }
@@ -168,14 +179,14 @@ function MyTable() {
               )}
               {sortData.columnId === index && sortData.sortType === 'ASC' && (
                 <i
-                  className='sort-icon fa fa-sort-desc'
+                  className='sort-icon fa fa-arrow-up'
                   onClick={() => onIconClick(index, 'DESC', index > 0 && index < 3 ? 'STR' : 'NUM')}
                   aria-hidden='true'
                 ></i>
               )}
               {sortData.columnId === index && sortData.sortType === 'DESC' && (
                 <i
-                  className='sort-icon fa fa-sort-asc'
+                  className='sort-icon fa fa-arrow-down'
                   onClick={() => onIconClick(index, 'ASC', index > 0 && index < 3 ? 'STR' : 'NUM')}
                   aria-hidden='true'
                 ></i>
@@ -187,10 +198,61 @@ function MyTable() {
     );
   };
 
+  const searchTable = e => {
+    e.preventDefault();
+    // Search Data
+    let searchedData = [...empInfo.data];
+    searchedData = searchedData.filter(elem => {
+      console.log(elem[searchData.column]);
+      return elem[searchData.column]
+        .toString()
+        .toLowerCase()
+        .includes(searchData.term.toString().toLowerCase());
+    });
+
+    setTableData(searchedData);
+  };
+
   return (
     <div>
       <p>This is Table</p>
       <AddTable />
+      <div className='search-div'>
+        <form onSubmit={searchTable}>
+          <select
+            onChange={e => {
+              setSearchData(prev => {
+                return {
+                  ...prev,
+                  column: headings.findIndex(value => value === e.target.value)
+                };
+              });
+            }}
+            value={headings[searchData.column]}
+          >
+            {headings.map((elem, index) => {
+              return (
+                <option key={elem} value={elem}>
+                  {elem}{' '}
+                </option>
+              );
+            })}
+          </select>
+          <input
+            className='search-input'
+            type='text'
+            value={searchData.term}
+            onChange={e =>
+              setSearchData(prev => {
+                return { ...prev, term: e.target.value };
+              })
+            }
+          />
+          <button className='submit-button' type='submit'>
+            Search
+          </button>
+        </form>
+      </div>
       <table>
         <thead>
           <tr>{renderTableHeading()}</tr>
