@@ -40,6 +40,8 @@ function MyTable() {
 
   const onEditableChange = e => {
     e.preventDefault();
+    console.log('hello');
+
     setInEditMode(prevState => {
       return {
         ...prevState,
@@ -53,6 +55,15 @@ function MyTable() {
       let updatedData = [...inEditMode.data];
       updatedData[inEditMode.columnId] = inEditMode.value;
       CRUDData('UPDATE', { id: inEditMode.id, updatedData });
+      setInEditMode({
+        data: null,
+        status: false,
+        id: null,
+        rowId: null,
+        columnId: null,
+        value: null
+      });
+    } else if (e.key === 'Escape') {
       setInEditMode({
         data: null,
         status: false,
@@ -86,10 +97,11 @@ function MyTable() {
                   return checkIfEditable(elem[0], index, i) ? (
                     <td key={i}>
                       <input
+                        ref={myRef}
                         value={inEditMode.value}
                         onChange={onEditableChange}
                         type={i > 2 ? 'number' : 'text'}
-                        onKeyPress={onUpdateSubmit}
+                        onKeyDown={onUpdateSubmit}
                       />
                     </td>
                   ) : (

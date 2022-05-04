@@ -11,6 +11,10 @@ function AddTable() {
   const onFormSubmit = e => {
     e.preventDefault();
     CRUDData('ADD', { newData: [empInfo.data.length + 1, fName, lName, age, salary] });
+    setFName('');
+    setLName('');
+    setAge(1);
+    setSalary(0);
   };
 
   return (
