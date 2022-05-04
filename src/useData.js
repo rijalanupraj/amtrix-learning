@@ -32,6 +32,8 @@ const useData = () => {
           return elem;
         });
         return dispatch({ type: 'CRUDDATA', data: updatedData });
+      case 'REPLACE':
+        return dispatch({ type: 'CRUDDATA', data: payload.data });
       default:
         return empInfo.data;
     }

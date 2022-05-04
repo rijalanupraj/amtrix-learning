@@ -26,6 +26,25 @@ function MyTable() {
   });
 
   useEffect(() => {
+    // Fetch data from http
+    const fetchEmp = async () => {
+      const response = await fetch('http://localhost:8000/empInfo');
+
+      const data = await response.json();
+
+      // Convert object to array
+      const dataArray = [];
+
+      for (let i = 0; i < data.length; i++) {
+        dataArray.push(Object.values(data[i]));
+      }
+      setTableData(dataArray);
+      CRUDData('REPLACE', { data: dataArray });
+    };
+    fetchEmp();
+  }, []);
+
+  useEffect(() => {
     setTableData(empInfo.data);
   }, [empInfo]);
 
