@@ -24,7 +24,7 @@ export default function MUITable() {
   useEffect(() => {
     const fetchEmp = async () => {
       const response = await fetch(
-        `http://localhost:8000/empInfo?_page=${page}&_limit=${pageSize}`
+        `http://localhost:8000/empInfo?$_page=${page}&_limit=${pageSize}`
       );
 
       const data = await response.json();
