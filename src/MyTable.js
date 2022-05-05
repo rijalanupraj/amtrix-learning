@@ -1,7 +1,8 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import MyContext from './utils/MyContext';
 import './style/table.css';
-import AddTable from './AddTable';
+import SearchSection from './components/SearchSection';
+import TableSection from './components/TableSection';
 
 function MyTable() {
   const myRef = useRef();
@@ -25,10 +26,17 @@ function MyTable() {
     column: 0
   });
 
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 5
+  });
+
   useEffect(() => {
     // Fetch data from http
     const fetchEmp = async () => {
-      const response = await fetch('http://localhost:8000/empInfo');
+      const response = await fetch(
+        `http://localhost:8000/empInfo?_page=${pagination.page}&_limit=${pagination.limit}`
+      );
 
       const data = await response.json();
 
@@ -124,9 +132,6 @@ function MyTable() {
           return a[sortData.columnId].localeCompare(b[sortData.columnId]);
         });
         break;
-      case 'DEFAULT':
-        console.log('hello');
-        break;
       default:
         break;
     }
@@ -166,63 +171,11 @@ function MyTable() {
     });
   };
 
-  const renderTableHeading = () => {
-    return (
-      <>
-        {headings.map((elem, index) => {
-          return (
-            <th key={elem}>
-              {elem}
-              {sortData.columnId !== index && (
-                <>
-                  <i
-                    className='sort-icon fa fa-arrow-up'
-                    onClick={() =>
-                      onIconClick(index, 'DESC', index > 0 && index < 3 ? 'STR' : 'NUM')
-                    }
-                    aria-hidden='true'
-                  ></i>
-                  <i
-                    className='sort-icon fa-solid fa-circle-minus'
-                    onClick={() => onIconClick(index, 'DEFAULT', 'DEFAULT')}
-                    aria-hidden='true'
-                  ></i>
-                  <i
-                    className='sort-icon fa fa-arrow-down'
-                    onClick={() =>
-                      onIconClick(index, 'ASC', index > 0 && index < 3 ? 'STR' : 'NUM')
-                    }
-                    aria-hidden='true'
-                  ></i>
-                </>
-              )}
-              {sortData.columnId === index && sortData.sortType === 'ASC' && (
-                <i
-                  className='sort-icon fa fa-arrow-up'
-                  onClick={() => onIconClick(index, 'DESC', index > 0 && index < 3 ? 'STR' : 'NUM')}
-                  aria-hidden='true'
-                ></i>
-              )}
-              {sortData.columnId === index && sortData.sortType === 'DESC' && (
-                <i
-                  className='sort-icon fa fa-arrow-down'
-                  onClick={() => onIconClick(index, 'ASC', index > 0 && index < 3 ? 'STR' : 'NUM')}
-                  aria-hidden='true'
-                ></i>
-              )}
-            </th>
-          );
-        })}
-      </>
-    );
-  };
-
   const searchTable = e => {
     e.preventDefault();
     // Search Data
     let searchedData = [...empInfo.data];
     searchedData = searchedData.filter(elem => {
-      console.log(elem[searchData.column]);
       return elem[searchData.column]
         .toString()
         .toLowerCase()
@@ -234,50 +187,18 @@ function MyTable() {
 
   return (
     <div>
-      <p>This is Table</p>
-      <AddTable />
-      <div className='search-div'>
-        <form onSubmit={searchTable}>
-          <select
-            onChange={e => {
-              setSearchData(prev => {
-                return {
-                  ...prev,
-                  column: headings.findIndex(value => value === e.target.value)
-                };
-              });
-            }}
-            value={headings[searchData.column]}
-          >
-            {headings.map((elem, index) => {
-              return (
-                <option key={elem} value={elem}>
-                  {elem}{' '}
-                </option>
-              );
-            })}
-          </select>
-          <input
-            className='search-input'
-            type='text'
-            value={searchData.term}
-            onChange={e =>
-              setSearchData(prev => {
-                return { ...prev, term: e.target.value };
-              })
-            }
-          />
-          <button className='submit-button' type='submit'>
-            Search
-          </button>
-        </form>
-      </div>
-      <table>
-        <thead>
-          <tr>{renderTableHeading()}</tr>
-        </thead>
-        <tbody>{renderTableRow()}</tbody>
-      </table>
+      <SearchSection
+        headings={headings}
+        searchData={searchData}
+        searchTable={searchTable}
+        setSearchData={setSearchData}
+      />
+      <TableSection
+        headings={headings}
+        sortData={sortData}
+        onIconClick={onIconClick}
+        renderTableRow={renderTableRow}
+      />
     </div>
   );
 }
